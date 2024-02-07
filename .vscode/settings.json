@@ -1,0 +1,4 @@
+{
+  "python.pythonPath": "C:/Users/uwema/AppData/Local/Programs/Python/Python312/python",
+  "python.analysis.extraPaths": ["./", "./datenmodelle", "./views"]
+}
