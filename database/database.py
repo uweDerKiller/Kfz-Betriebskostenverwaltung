@@ -16,3 +16,11 @@ class Database:
 
     def get_session(self):
         return self.Session()
+
+    def get_available_autos(self):
+        from models.auto import Auto
+
+        session = self.Session()
+        autos = session.query(Auto).all()
+        session.close
+        return [auto.marke + " " + auto.modell for auto in autos]

@@ -8,7 +8,7 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.orm import relationship
-from ..database.database import Base  # Importieren Sie Base von database.py
+from database.database import Base  # Importieren Sie Base von database.py
 
 
 class Werkstattrechnung(Base):

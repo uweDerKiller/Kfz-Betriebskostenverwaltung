@@ -8,7 +8,9 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.orm import relationship
-from ..database.database import Base  # Importieren Sie Base von database.pyfrom database import Database
+from database.database import (
+    Base,
+)  # Importieren Sie Base von database.pyfrom database import Database
 
 
 class Tankvorgang(Base):
