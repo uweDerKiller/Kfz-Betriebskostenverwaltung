@@ -24,3 +24,17 @@ class Database:
         autos = session.query(Auto).all()
         session.close
         return [auto.marke + " " + auto.modell for auto in autos]
+
+    def get_all_tankvorgaenge(self):
+        from models.tankvorgang import Tankvorgang
+
+        session = self.Session()
+        tankvorgaenge = session.query(Tankvorgang).all()
+        session.close
+        return [
+            tankvorgaenge.datum
+            + tankvorgaenge.liter
+            + tankvorgaenge.preis_pro_liter
+            + tankvorgaenge.gefahrene_km
+            for tankvorgaenge in tankvorgaenge
+        ]
