@@ -34,7 +34,7 @@ class Database:
         return [
             tankvorgaenge.datum
             + tankvorgaenge.liter
-            + tankvorgaenge.preis_pro_liter
+            + tankvorgaenge.preis
             + tankvorgaenge.gefahrene_km
             for tankvorgaenge in tankvorgaenge
         ]

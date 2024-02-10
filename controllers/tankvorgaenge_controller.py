@@ -1,6 +1,6 @@
-from tkinter import messagebox
 import sqlite3
-import datetime
+from tkinter import messagebox
+from datetime import datetime
 
 
 class TankvorgaengeController:
@@ -16,35 +16,60 @@ class TankvorgaengeController:
         liter = self.liter_entry.get()
         preis = self.preis_entry.get()
         km = self.km_entry.get()
+
         try:
-            datetime.datetime.strptime(datum, "%Y-%m-%d")
+            # Überprüfen des Datumsformats
+            datetime.strptime(datum, "%Y-%m-%d")
         except ValueError:
             messagebox.showerror("Fehler", "Ungültiges Datumsformat")
             return
 
-        try:
-            liter = float(liter)
-            preis = float(preis)
-            km = float(km)
-        except ValueError:
+        # Konvertieren der Eingaben in Float mit flexiblerem Dezimaltrennzeichen
+        liter = self.convert_to_float(liter)
+        preis = self.convert_to_float(preis)
+        km = self.convert_to_float(km)
+
+        # Überprüfen, ob die Konvertierung erfolgreich war
+        if liter is None or preis is None or km is None:
             messagebox.showerror("Fehler", "Ungültige numerische Eingabe")
             return
 
-        self.conn = sqlite3.connect("meine_datenbank.db")
         try:
-            c = self.conn.cursor()
+            # Verbindung zur SQLite-Datenbank herstellen
+            conn = sqlite3.connect("meine_datenbank.db")
+            c = conn.cursor()
+
+            # Tabelle erstellen (falls nicht vorhanden)
             c.execute(
                 """CREATE TABLE IF NOT EXISTS tankvorgaenge
                     (datum TEXT, liter FLOAT, preis FLOAT, km FLOAT)"""
             )
+
+            # Daten einfügen
             c.execute(
                 "INSERT INTO tankvorgaenge (datum, liter, preis, km) VALUES (?, ?, ?, ?)",
                 (datum, liter, preis, km),
             )
-            self.conn.commit()
-            self.conn.close()
-        except Exception as e:
-            messagebox.showerror("Fehler", str(e))
+
+            # Änderungen bestätigen
+            conn.commit()
+            messagebox.showinfo("Gespeichert", "Tankvorgang gespeichert")
+
+        except sqlite3.Error as e:
+            # Fehlerbehandlung bei Datenbankfehlern
+            messagebox.showerror("Fehler", "Datenbankfehler: " + str(e))
+
         finally:
-            self.conn.close()
-        messagebox.showinfo("Gespeichert", "Tankvorgang gespeichert")
+            # Verbindung schließen
+            conn.close()
+
+    def convert_to_float(self, entry_text):
+        # Ersetzen von ',' durch '.', falls vorhanden
+        entry_text = entry_text.replace(",", ".")
+        try:
+            # Versuche den Text in eine Gleitkommazahl umzuwandeln
+            float_value = float(entry_text)
+            return float_value
+        except ValueError:
+            # Wenn die Umwandlung fehlschlägt, gebe None zurück
+            return None

@@ -1,0 +1,48 @@
+@startuml Autoverwaltung
+
+    class TankvorgaengeView {
+        - master: object
+        - datum_entry: Entry
+        - liter_entry: Entry
+        - preis_entry: Entry
+        - km_entry: Entry
+        - statistik_label: Label
+        - statistik_text: Text
+        + __init__(master: object)
+        + anzeigen_statistik()
+    }
+
+    class TankvorgaengeController {
+        - view: TankvorgaengeView
+        - datum_entry: Entry
+        - liter_entry: Entry
+        - preis_entry: Entry
+        - km_entry: Entry
+        + __init__(view: TankvorgaengeView, datum_entry: Entry, liter_entry: Entry, preis_entry: Entry, km_entry: Entry)
+        + speichern()
+    }
+
+TankvorgaengeView *-right-> TankvorgaengeController
+
+package "Models" {
+    class "Tankvorgang" {
+        - id: Integer
+        - auto_id: Integer
+        - datum: Date
+        - liter: Float
+        - preis: Float
+        - gefahrene_km: Float
+    }
+
+
+    class "Auto" {
+        - id: Integer
+        - marke: String
+        - modell: String
+        - baujahr: Integer
+        - kennzeichen: String
+        - tankvorgaenge: List[Tankvorgang]
+    }
+}
+Tankvorgang *-- Auto: auto_id
+@enduml
