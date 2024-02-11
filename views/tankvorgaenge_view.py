@@ -45,17 +45,21 @@ class TankvorgaengeView:
         self.anzeigen_statistik()
 
     def anzeigen_statistik(self):
-        db = Database()
-        tankvorgaenge = db.get_all_tankvorgaenge()
+        db = Database()  # Erstelle eine Instanz der Database-Klasse
+        tankvorgaenge_list = db.get_all_tankvorgaenge()
+        # Zugriff auf die Liste der Tankvorgänge
 
-        liter_summe = sum(tankvorgang.liter for tankvorgang in tankvorgaenge)
-        km_summe = sum(tankvorgang.km for tankvorgang in tankvorgaenge)
-        preis_summe = sum(tankvorgang.preis for tankvorgang in tankvorgaenge)
+        if not tankvorgaenge_list:
+            self.statistik_text.delete(1.0, tk.END)
+            self.statistik_text.insert(tk.END, "Keine Tankvorgänge vorhanden")
+            return
+
+        liter_summe = sum(tankvorgang.liter for tankvorgang in tankvorgaenge_list)
+        km_summe = sum(tankvorgang.gefahrene_km for tankvorgang in tankvorgaenge_list)
+        preis_summe = sum(tankvorgang.preis for tankvorgang in tankvorgaenge_list)
 
         durchschnittlicher_verbrauch = liter_summe / km_summe if km_summe != 0 else 0
-        durchschnittlicher_preis = (
-            preis_summe / liter_summe if liter_summe != 0 else 0
-        )
+        durchschnittlicher_preis = preis_summe / liter_summe if liter_summe != 0 else 0
 
         statistik_text = f"Durchschnittlicher Verbrauch: {durchschnittlicher_verbrauch:.2f} Liter/km\n"
         statistik_text += f"Durchschnittlicher Preis pro Liter: {durchschnittlicher_preis:.2f} Euro/Liter"

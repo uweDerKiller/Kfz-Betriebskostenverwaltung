@@ -30,11 +30,6 @@ class Database:
 
         session = self.Session()
         tankvorgaenge = session.query(Tankvorgang).all()
-        session.close
-        return [
-            tankvorgaenge.datum
-            + tankvorgaenge.liter
-            + tankvorgaenge.preis
-            + tankvorgaenge.gefahrene_km
-            for tankvorgaenge in tankvorgaenge
-        ]
+        session.close()
+
+        return tankvorgaenge

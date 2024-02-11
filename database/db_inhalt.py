@@ -14,12 +14,10 @@ class Database:
         self.Session = sessionmaker(bind=self.engine)
 
     def anzeigen_tankvorgaenge_inhalt(self):
-
-        self.c.execute("SELECT * FROM tankvorgaenge")
+        self.c.execute("SELECT datum, liter, preis, gefahrene_km FROM tankvorgaenge")
         results = self.c.fetchall()
 
         for row in results:
-
             print("Datum:", row[0])
             print("Liter:", row[1])
             print("Preis:", row[2])

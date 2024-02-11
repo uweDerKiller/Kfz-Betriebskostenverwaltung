@@ -15,7 +15,7 @@ class TankvorgaengeController:
         datum = self.datum_entry.get()
         liter = self.liter_entry.get()
         preis = self.preis_entry.get()
-        km = self.km_entry.get()
+        gefahrene_km = self.km_entry.get()
 
         try:
             # Überprüfen des Datumsformats
@@ -27,10 +27,10 @@ class TankvorgaengeController:
         # Konvertieren der Eingaben in Float mit flexiblerem Dezimaltrennzeichen
         liter = self.convert_to_float(liter)
         preis = self.convert_to_float(preis)
-        km = self.convert_to_float(km)
+        gefahrene_km = self.convert_to_float(gefahrene_km)
 
         # Überprüfen, ob die Konvertierung erfolgreich war
-        if liter is None or preis is None or km is None:
+        if liter is None or preis is None or gefahrene_km is None:
             messagebox.showerror("Fehler", "Ungültige numerische Eingabe")
             return
 
@@ -42,13 +42,13 @@ class TankvorgaengeController:
             # Tabelle erstellen (falls nicht vorhanden)
             c.execute(
                 """CREATE TABLE IF NOT EXISTS tankvorgaenge
-                    (datum TEXT, liter FLOAT, preis FLOAT, km FLOAT)"""
+                    (datum TEXT, liter FLOAT, preis FLOAT, gefahrene_km FLOAT)"""
             )
 
             # Daten einfügen
             c.execute(
-                "INSERT INTO tankvorgaenge (datum, liter, preis, km) VALUES (?, ?, ?, ?)",
-                (datum, liter, preis, km),
+                "INSERT INTO tankvorgaenge (datum, liter, preis, gefahrene_km) VALUES (?, ?, ?, ?)",
+                (datum, liter, preis, gefahrene_km),
             )
 
             # Änderungen bestätigen
