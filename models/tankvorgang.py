@@ -1,16 +1,14 @@
 from sqlalchemy import (
     Column,
     Integer,
-    String,
     Float,
     ForeignKey,
     Date,
-    Text,
 )
 from sqlalchemy.orm import relationship
 from database.database import (
     Base,
-)  # Importieren Sie Base von database.pyfrom database import Database
+)
 
 
 class Tankvorgang(Base):

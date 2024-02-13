@@ -5,11 +5,8 @@ from sqlalchemy.orm import sessionmaker
 
 class Database:
     def __init__(self):
-        # SQLite-Datenbankverbindung initialisieren
         self.conn = sqlite3.connect("meine_datenbank.db")
         self.c = self.conn.cursor()
-
-        # SQLAlchemy-Engine und Sessionmaker initialisieren
         self.engine = create_engine("sqlite:///meine_datenbank.db")
         self.Session = sessionmaker(bind=self.engine)
 

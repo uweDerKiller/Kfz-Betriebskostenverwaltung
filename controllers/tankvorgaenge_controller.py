@@ -1,75 +1,49 @@
 import sqlite3
 from tkinter import messagebox
-from datetime import datetime
+import datetime
 
 
-class TankvorgaengeController:
-    def __init__(self, view, datum_entry, liter_entry, preis_entry, km_entry):
-        self.view = view
-        self.datum_entry = datum_entry
-        self.liter_entry = liter_entry
-        self.preis_entry = preis_entry
-        self.km_entry = km_entry
-
-    def speichern(self):
-        datum = self.datum_entry.get()
-        liter = self.liter_entry.get()
-        preis = self.preis_entry.get()
-        gefahrene_km = self.km_entry.get()
-
-        try:
-            # Überprüfen des Datumsformats
-            datetime.strptime(datum, "%Y-%m-%d")
-        except ValueError:
-            messagebox.showerror("Fehler", "Ungültiges Datumsformat")
-            return
-
-        # Konvertieren der Eingaben in Float mit flexiblerem Dezimaltrennzeichen
-        liter = self.convert_to_float(liter)
-        preis = self.convert_to_float(preis)
-        gefahrene_km = self.convert_to_float(gefahrene_km)
-
-        # Überprüfen, ob die Konvertierung erfolgreich war
-        if liter is None or preis is None or gefahrene_km is None:
-            messagebox.showerror("Fehler", "Ungültige numerische Eingabe")
-            return
-
-        try:
-            # Verbindung zur SQLite-Datenbank herstellen
-            conn = sqlite3.connect("meine_datenbank.db")
-            c = conn.cursor()
-
-            # Tabelle erstellen (falls nicht vorhanden)
-            c.execute(
-                """CREATE TABLE IF NOT EXISTS tankvorgaenge
+def tankvorgang_speichern(datum, liter, preis, gefahrene_km):
+    if not isinstance(datum, datetime.date):
+        messagebox.showerror("Fehler", "Ungültiges Datumsformat")
+        return
+    liter = convert_to_float(liter)
+    preis = convert_to_float(preis)
+    gefahrene_km = convert_to_float(gefahrene_km)
+    if liter is None or preis is None or gefahrene_km is None:
+        messagebox.showerror("Fehler", "Ungültige numerische Eingabe")
+        return
+    try:
+        conn = sqlite3.connect("meine_datenbank.db")
+        c = conn.cursor()
+        c.execute(
+            """CREATE TABLE IF NOT EXISTS tankvorgaenge
                     (datum TEXT, liter FLOAT, preis FLOAT, gefahrene_km FLOAT)"""
-            )
+        )
+        c.execute(
+            "INSERT INTO tankvorgaenge (datum, liter, preis, gefahrene_km) VALUES (?, ?, ?, ?)",
+            (datum, liter, preis, gefahrene_km),
+        )
+        conn.commit()
+        messagebox.showinfo("Gespeichert", "Tankvorgang gespeichert")
+    except sqlite3.Error as e:
+        messagebox.showerror("Fehler", "Datenbankfehler: " + str(e))
+    finally:
+        conn.close()
 
-            # Daten einfügen
-            c.execute(
-                "INSERT INTO tankvorgaenge (datum, liter, preis, gefahrene_km) VALUES (?, ?, ?, ?)",
-                (datum, liter, preis, gefahrene_km),
-            )
 
-            # Änderungen bestätigen
-            conn.commit()
-            messagebox.showinfo("Gespeichert", "Tankvorgang gespeichert")
+def convert_to_float(entry):
 
-        except sqlite3.Error as e:
-            # Fehlerbehandlung bei Datenbankfehlern
-            messagebox.showerror("Fehler", "Datenbankfehler: " + str(e))
-
-        finally:
-            # Verbindung schließen
-            conn.close()
-
-    def convert_to_float(self, entry_text):
-        # Ersetzen von ',' durch '.', falls vorhanden
-        entry_text = entry_text.replace(",", ".")
-        try:
-            # Versuche den Text in eine Gleitkommazahl umzuwandeln
-            float_value = float(entry_text)
-            return float_value
-        except ValueError:
-            # Wenn die Umwandlung fehlschlägt, gebe None zurück
-            return None
+    print("entry vor strip" + str(entry))
+    entry_text = entry.strip()
+    print("entry_text" + str(entry_text))
+    if not entry_text:  # Prüfen Sie, ob der Text leer ist
+        return None
+    entry_text = entry_text.replace(",", ".")
+    print("entry_text replaced" + str(entry_text))
+    try:
+        float_value = float(entry_text)
+        print("und konvertiert" + str(float_value))
+        return float_value
+    except ValueError:
+        return None

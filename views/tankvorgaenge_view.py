@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import *
-from datetime import datetime
 from database.database import Database
-from controllers.tankvorgaenge_controller import TankvorgaengeController
+import controllers.tankvorgaenge_controller
 
 
 class TankvorgaengeView:
@@ -29,11 +28,15 @@ class TankvorgaengeView:
         self.km_entry = tk.Entry(self.master)
         self.km_entry.grid(row=3, column=1)
 
-        self.controller = TankvorgaengeController(
-            self, self.datum_entry, self.liter_entry, self.preis_entry, self.km_entry
-        )
         ttk.Button(
-            self.master, text="Speichern", command=self.controller.speichern
+            self.master,
+            text="Speichern",
+            command=lambda: controllers.tankvorgaenge_controller.tankvorgang_speichern(
+                self.datum_entry.get_date(),
+                self.liter_entry.get(),
+                self.preis_entry.get(),
+                self.km_entry.get(),
+            ),
         ).grid(row=4, column=0, columnspan=2)
 
         self.statistik_label = ttk.Label(self.master, text="Statistik:")
@@ -45,9 +48,8 @@ class TankvorgaengeView:
         self.anzeigen_statistik()
 
     def anzeigen_statistik(self):
-        db = Database()  # Erstelle eine Instanz der Database-Klasse
+        db = Database()
         tankvorgaenge_list = db.get_all_tankvorgaenge()
-        # Zugriff auf die Liste der Tankvorgänge
 
         if not tankvorgaenge_list:
             self.statistik_text.delete(1.0, tk.END)

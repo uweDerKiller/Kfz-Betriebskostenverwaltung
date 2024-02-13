@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from controllers.autohinzufuegen_controller import AutoHinzufuegenController
+import controllers.autohinzufuegen_controller
 
 
 class AutoHinzufuegenView:
@@ -22,8 +22,6 @@ class AutoHinzufuegenView:
         ttk.Button(self.master, text="Speichern", command=self.speichern).grid(
             row=4, column=0, columnspan=2
         )
-        # Controller initialisieren
-        self.controller = AutoHinzufuegenController(self)
 
     def speichern(self):
         modell = self.modell_entry.get()
@@ -31,4 +29,6 @@ class AutoHinzufuegenView:
         baujahr = self.baujahr_entry.get()
         kennzeichen = self.kennzeichen_entry.get()
 
-        self.controller.speichern(marke, modell, baujahr, kennzeichen)
+        controllers.autohinzufuegen_controller.neuesauto_speichern(
+            marke, modell, baujahr, kennzeichen
+        )
